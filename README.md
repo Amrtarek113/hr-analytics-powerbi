@@ -1,3 +1,4 @@
+![HR Analytics Dashboard](banner.png)
 # 📊 HR Analytics Dashboard — Atlas Labs
 
 > A Power BI case study exploring employee attrition, demographics, and performance for a fictitious software company.
