@@ -17,10 +17,10 @@ This project builds an end-to-end HR Analytics dashboard in Power BI that transf
 ```
 hr-analytics-powerbi/
 │
-├── EXAM.pbix               # Main Power BI report file
-├── README.md               # Project documentation (this file)
+├── dashboard.pbix               # Main Power BI report file
+├── README.md               # Project documentation 
 └── assets/
-    └── screenshots/        # Dashboard preview images (add yours here)
+    └── screenshots/        # Dashboard preview images 
 ```
 
 ---
@@ -35,7 +35,15 @@ hr-analytics-powerbi/
 | **Performance Tracking** | Employee performance ratings over time, by department and job level |
 
 ---
+## 📊 Live Dashboard
 
+[![Open Interactive Dashboard](https://img.shields.io/badge/Power%20BI-Open%20Interactive%20Report-F2C811?style=for-the-badge&logo=powerbi&logoColor=black)](https://app.powerbi.com/view?r=eyJrIjoiMTY5YWMyMjktODViYS00ZDJhLTk1MmQtZTllMjU3N2JjZDM2IiwidCI6ImRmODY3OWNkLWE4MGUtNDVkOC05OWFjLWM4M2VkN2ZmOTVhMCJ9)
+
+> Click the badge above to explore the full interactive report.
+---
+## ![Dashboard Preview](dashboard.gif)
+<img src="dashboard.gif" width="900">
+---
 ## 🔍 Problem Statement
 
 > *"We know people are leaving — but we don't know why, and we don't know who's next."*
@@ -69,16 +77,102 @@ Atlas Labs needed a reporting solution that could:
 ## 📐 Key DAX Measures
 
 ```dax
--- Attrition Rate
-Attrition Rate = 
-DIVIDE(
-    COUNTROWS(FILTER(DimEmployee, DimEmployee[Attrition] = "Yes")),
-    COUNTROWS(DimEmployee)
+-- Total Employees
+    TotalEmployees =
+DISTINCTCOUNT(DimEmployee[EmployeeID])
+    - DISTINCTCOUNT is used to count unique employees based on EmployeeID,
+    - ensuring each employee is counted once even if multiple records exist.
+
+--Total EmployeesDate
+    TotalEmployeesDate = 
+CALCULATE (
+    [TotalEmployees],
+    USERELATIONSHIP ( DimEmployee[HireDate], DimDate[Date] )
 )
 
 -- Active Employees
-Active Employees = 
-COUNTROWS(FILTER(DimEmployee, DimEmployee[Attrition] = "No"))
+ActiveEmployees =
+CALCULATE([TotalEmployees],
+    FILTER(DimEmployee, DimEmployee[Attrition] = "No")
+         )
+
+-- Inactive Employees
+ InactiveEmployees =
+ CALCULATE([TotalEmployees],
+FILTER(DimEmployee, DimEmployee[Attrition] = "Yes")
+          )
+
+-- Inactive Employees By Date
+InactiveEmployeesDate =
+ CALCULATE( [InactiveEmployees] , 
+    USERELATIONSHIP(DimEmployee[HireDate],DimDate[Date]))
+    - USERELATIONSHIP activates an inactive relationship in the data model so the measure
+    - can calculate results based on that specific relationship.
+
+-- Attrition Rate
+% Attrition Rate =
+    DIVIDE([InactiveEmployees], [TotalEmployees])
+
+-- Attrition Rate By Date
+ % Attrition Rate Date =
+     DIVIDE( [InactiveEmployeesDate] , [TotalEmployeesDate])
+
+-- Last Review Date
+    LastReviewDate = 
+IF (
+    MAX ( FactPerformanceRating[ReviewDate] ) = BLANK (),
+    "No Review Yet",
+    MAX ( FactPerformanceRating[ReviewDate] )
+)
+
+-- Average Salary
+AverageSalary =
+    AVERAGE(DimEmployee[Salary])
+
+-- Environment Satisfaction
+Environment Satisfaction = 
+    MAX(FactPerformanceRating[EnvironmentSatisfaction])
+
+--  Job Satisfaction
+JobSatisfaction =
+     MAX(FactPerformanceRating[JobSatisfaction])
+
+-- Self Rating
+SelfRating =
+     MAX(FactPerformanceRating[SelfRating])
+
+-- Manager Rating
+    ManagerRating = CALCULATE(
+    MAX(FactPerformanceRating[ManagerRating]) , 
+        USERELATIONSHIP(FactPerformanceRating[ManagerRating],DimRatingLevel[RatingID]))
+    - USERELATIONSHIP activates an inactive relationship in the data model so the measure
+    - can calculate results based on that specific relationship.
+
+-- Relationship Satisfaction
+RelationshipSatisfaction =
+    CALCULATE(
+    MAX(FactPerformanceRating[RelationshipSatisfaction]),
+        USERELATIONSHIP(DimSatisfiedLevel[SatisfactionID],FactPerformanceRating[RelationshipSatisfaction]))
+    - USERELATIONSHIP activates an inactive relationship in the data model so the measure
+    - can calculate results based on that specific relationship.
+
+-- Work Life Balance
+    WorkLifeBalance = CALCULATE(
+    MAX(FactPerformanceRating[WorkLifeBalance]) , 
+    USERELATIONSHIP(DimSatisfiedLevel[SatisfactionID],FactPerformanceRating[WorkLifeBalance]))
+
+-- NextReviewDate
+NextReviewDate = 
+VAR reviewOrHire =
+    IF (
+        MAX ( FactPerformanceRating[ReviewDate] ) = BLANK (),
+        MAX ( DimEmployee[HireDate] ),
+        MAX ( FactPerformanceRating[ReviewDate] )
+    )
+RETURN
+    reviewOrHire + 365
+    - VAR stores the chosen date (review date or hire date) so it can be reused in the RETURN statement,
+    - improving readability and preventing repeated calculations.
 
 -- Average Tenure
 Avg Tenure (Years) = 
