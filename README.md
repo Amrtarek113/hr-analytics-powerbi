@@ -42,7 +42,6 @@ hr-analytics-powerbi/
 > Click the badge above to explore the full interactive report.
 ---
 ## ![Dashboard Preview](dashboard.gif)
-<img src="dashboard.gif" width="900">
 ---
 ## 🔍 Problem Statement
 
