@@ -207,7 +207,7 @@ AVERAGE(DimEmployee[YearsAtCompany])
 
 ## 🚀 How to View
 
-1. Download `EXAM.pbix` from this repository
+1. Download `dashboard.pbix` from this repository
 2. Open with [Power BI Desktop](https://powerbi.microsoft.com/desktop/) (free)
 3. Navigate between pages using the tabs at the bottom
 
@@ -226,8 +226,8 @@ This project was completed as part of the **DataCamp** course:
 
 **Amr** — Communications Engineering Student | Aspiring Data Analyst
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=flat&logo=linkedin)](https://linkedin.com/in/YOUR-PROFILE)
-[![GitHub](https://img.shields.io/badge/GitHub-Follow-181717?style=flat&logo=github)](https://github.com/YOUR-USERNAME)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=flat&logo=linkedin)](https://www.linkedin.com/in/eng3mrtarek/)
+[![GitHub](https://img.shields.io/badge/GitHub-Follow-181717?style=flat&logo=github)](https://github.com/Amrtarek113)
 
 ---
 
