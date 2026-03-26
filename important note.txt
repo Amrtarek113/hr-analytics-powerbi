@@ -1,0 +1,3 @@
+dimdate.txt 
+is file for new table used in dashboardcopy code and paste it with this steps
+copy code then go to model view in power bi then from home window select New table and paste code 
